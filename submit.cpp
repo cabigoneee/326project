@@ -7,6 +7,8 @@ Student ID: 1155064634
 Student Name: Ho Kwan Hi Marcus Kuncoro
 *********************************************************/
 
+#define _CRT_SECURE_NO_WARNINGS
+
 #include "Dependencies\glew\glew.h"
 #include "Dependencies\freeglut\freeglut.h"
 #include "Dependencies\glm\glm.hpp"
@@ -49,8 +51,11 @@ GLfloat lastY = 600 / 2.0;
 GLint programID;
 GLuint textureID = NULL;
 // Could define the Vao&Vbo and interaction parameter here
+GLuint vao_cube, vbo_cube, texture_cube;
 GLuint VAO_Jeep, VBO_Jeep, UV_Jeep, Normal_Jeep, drawSize_Jeep, texture_Jeep, texture_Jeep2, carskin1, carskin2;
-GLuint VAO_Plane, VBO_Plane, UV_Plane, Normal_Plane, drawSize_Plane, texture_Plane;
+GLuint VAO_PlanetA, VBO_PlanetA, UV_PlanetA, Normal_PlanetA, drawSize_PlanetA, texture_PlanetA;
+GLuint VAO_PlanetB, VBO_PlanetB, UV_PlanetB, Normal_PlanetB, drawSize_PlanetB, texture_PlanetB;
+GLuint VAO_PlanetC, VBO_PlanetC, UV_PlanetC, Normal_PlanetC, drawSize_PlanetC, texture_PlanetC;
 
 bool checkStatus(
 	GLuint objectID,
@@ -408,6 +413,104 @@ GLuint loadBMP_custom(const char * imagepath) {
 	return textureID;
 }
 
+void bindCubeObj()
+{
+	const GLfloat cube[] =
+	{
+		//back
+		+0.5f, +0.5f, -0.5f, //0
+		+0.0f, +1.0f, +0.0f,
+		-0.5f, +0.5f, -0.5f, //1
+		+0.0f, +1.0f, +0.0f,
+		-0.5f, -0.5f, -0.5f, //2
+		+0.0f, +1.0f, +0.0f,
+		+0.5f, -0.5f, -0.5f, //3
+		+0.0f, +1.0f, +0.0f,
+
+		//front
+		+0.5f, +0.5f, +0.5f, //4
+		+1.0f, +0.0f, +1.0f,
+		-0.5f, +0.5f, +0.5f, //5
+		+1.0f, +0.0f, +1.0f,
+		-0.5f, -0.5f, +0.5f, //6
+		+1.0f, +0.0f, +1.0f,
+		+0.5f, -0.5f, +0.5f, //7
+		+1.0f, +0.0f, +1.0f,
+
+		//right
+		-0.5f, +0.5f, +0.5f, //8
+		+0.0f, +0.0f, +1.0f,
+		-0.5f, -0.5f, +0.5f, //9
+		+0.0f, +0.0f, +1.0f,
+		-0.5f, -0.5f, -0.5f, //10
+		+0.0f, +0.0f, +1.0f,
+		-0.5f, +0.5f, -0.5f, //11
+		+0.0f, +0.0f, +1.0f,
+
+		//left
+		+0.5f, +0.5f, +0.5f, //12
+		+1.0f, +1.0f, +0.0f,
+		+0.5f, -0.5f, +0.5f, //13
+		+1.0f, +1.0f, +0.0f,
+		+0.5f, -0.5f, -0.5f, //14
+		+1.0f, +1.0f, +0.0f,
+		+0.5f, +0.5f, -0.5f, //15
+		+1.0f, +1.0f, +0.0f,
+
+		//top
+		+0.5f, +0.5f, +0.5f, //16
+		+1.0f, +0.0f, +0.0f,
+		+0.5f, +0.5f, -0.5f, //17
+		+1.0f, +0.0f, +0.0f,
+		-0.5f, +0.5f, -0.5f, //18
+		+1.0f, +0.0f, +0.0f,
+		-0.5f, +0.5f, +0.5f, //19
+		+1.0f, +0.0f, +0.0f,
+
+		//bottom
+		+0.5f, -0.5f, +0.5f, //20
+		+0.0f, +1.0f, +1.0f,
+		+0.5f, -0.5f, -0.5f, //21
+		+0.0f, +1.0f, +1.0f,
+		-0.5f, -0.5f, -0.5f, //22
+		+0.0f, +1.0f, +1.0f,
+		-0.5f, -0.5f, +0.5f, //23
+		+0.0f, +1.0f, +1.0f,
+
+	};
+	//GLuint vaoID;
+	glGenVertexArrays(1, &vao_cube);
+	glBindVertexArray(vao_cube);  //first VAO
+	//GLuint vboID;
+	glGenBuffers(1, &vbo_cube);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo_cube);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(cube), cube, GL_STATIC_DRAW);
+	//vertex position
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), 0);
+	//vertex color
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (char*)(3 * sizeof(float)));
+
+	//glVertexAttribPointer attribute (the assigned number attribute, no of input per line, type(GL_FLOAT), GL_FALSE, no of inputs of each vertex, skip how many inputs for the first value)
+
+	GLushort indices[] = { 0, 1, 2,
+		0, 2, 3,
+		4, 5, 6,
+		4, 6, 7,
+		8, 9, 10,
+		8, 10, 11,
+		12, 13, 14,
+		12, 14, 15,
+		16, 17, 18,
+		16, 18, 19,
+		20, 21, 22,
+		20, 22, 23, };
+	GLuint indexBufferID;
+	glGenBuffers(1, &indexBufferID);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferID);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+}
 
 void bindJeepObj()
 {
@@ -415,7 +518,7 @@ void bindJeepObj()
 	std::vector<vec3> vertices;
 	std::vector<vec2> uvs;
 	std::vector<vec3> normals;
-	bool res = loadOBJ("jeep.obj", vertices, uvs, normals);
+	bool res = loadOBJ("obj/jeep.obj", vertices, uvs, normals);
 	glGenVertexArrays(1, &VAO_Jeep);
 	glBindVertexArray(VAO_Jeep);
 
@@ -476,32 +579,32 @@ void bindJeepObj()
 	glBindVertexArray(0); // Unbind VAO*
 };
 
-void bindPlaneObj()
+void bindPlanetAObj()
 {
 	// Read our .obj file
 	std::vector<vec3> vertices;
 	std::vector<vec2> uvs;
 	std::vector<vec3> normals;
-	bool res = loadOBJ("plane.obj", vertices, uvs, normals);
-	glGenVertexArrays(1, &VAO_Plane);
-	glBindVertexArray(VAO_Plane);
+	bool res = loadOBJ("obj/planet.obj", vertices, uvs, normals);
+	glGenVertexArrays(1, &VAO_PlanetA);
+	glBindVertexArray(VAO_PlanetA);
 
-	glGenBuffers(1, &VBO_Plane);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO_Plane);
+	glGenBuffers(1, &VBO_PlanetA);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO_PlanetA);
 	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(glm::vec3), &vertices[0], GL_STATIC_DRAW);
 
-	glGenBuffers(1, &UV_Plane);
-	glBindBuffer(GL_ARRAY_BUFFER, UV_Plane);
+	glGenBuffers(1, &UV_PlanetA);
+	glBindBuffer(GL_ARRAY_BUFFER, UV_PlanetA);
 	 glBufferData(GL_ARRAY_BUFFER, uvs.size() * sizeof(glm::vec2), &uvs[0], GL_STATIC_DRAW);
 
-	glGenBuffers(1, &Normal_Plane);
-	glBindBuffer(GL_ARRAY_BUFFER, Normal_Plane);
+	glGenBuffers(1, &Normal_PlanetA);
+	glBindBuffer(GL_ARRAY_BUFFER, Normal_PlanetA);
 	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(glm::vec3), &normals[0], GL_STATIC_DRAW);
 
-	drawSize_Plane = vertices.size();
+	drawSize_PlanetA = vertices.size();
 	// 1rst attribute buffer : vertices
 
-	glBindBuffer(GL_ARRAY_BUFFER, VBO_Plane);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO_PlanetA);
 	glVertexAttribPointer(
 		0, // attribute
 		3, // size
@@ -512,7 +615,7 @@ void bindPlaneObj()
 		);
 	glEnableVertexAttribArray(0);
 
-	glBindBuffer(GL_ARRAY_BUFFER, UV_Plane);
+	glBindBuffer(GL_ARRAY_BUFFER, UV_PlanetA);
 	glVertexAttribPointer(
 		1, // attribute
 		2, // size
@@ -524,7 +627,7 @@ void bindPlaneObj()
 	glEnableVertexAttribArray(1);
 
 	
-	glBindBuffer(GL_ARRAY_BUFFER, Normal_Jeep);
+	glBindBuffer(GL_ARRAY_BUFFER, Normal_PlanetA);
 	glVertexAttribPointer(
 	2, // attribute
 	3, // size
@@ -536,16 +639,150 @@ void bindPlaneObj()
 	glEnableVertexAttribArray(2);
 	
 
-	glDrawArrays(GL_TRIANGLES, 0, drawSize_Plane);
+	glDrawArrays(GL_TRIANGLES, 0, drawSize_PlanetA);
 
 	glBindVertexArray(0); // Unbind VAO*
 };
 
+void bindPlanetBObj()
+{
+	// Read our .obj file
+	std::vector<vec3> vertices;
+	std::vector<vec2> uvs;
+	std::vector<vec3> normals;
+	bool res = loadOBJ("obj/planet.obj", vertices, uvs, normals);
+	glGenVertexArrays(1, &VAO_PlanetB);
+	glBindVertexArray(VAO_PlanetB);
+
+	glGenBuffers(1, &VBO_PlanetB);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO_PlanetB);
+	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(glm::vec3), &vertices[0], GL_STATIC_DRAW);
+
+	glGenBuffers(1, &UV_PlanetB);
+	glBindBuffer(GL_ARRAY_BUFFER, UV_PlanetB);
+	glBufferData(GL_ARRAY_BUFFER, uvs.size() * sizeof(glm::vec2), &uvs[0], GL_STATIC_DRAW);
+
+	glGenBuffers(1, &Normal_PlanetB);
+	glBindBuffer(GL_ARRAY_BUFFER, Normal_PlanetB);
+	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(glm::vec3), &normals[0], GL_STATIC_DRAW);
+
+	drawSize_PlanetB = vertices.size();
+	// 1rst attribute buffer : vertices
+
+	glBindBuffer(GL_ARRAY_BUFFER, VBO_PlanetB);
+	glVertexAttribPointer(
+		0, // attribute
+		3, // size
+		GL_FLOAT, // type
+		GL_FALSE, // normalized?
+		0, // stride
+		(void*)0 // array buffer offset
+		);
+	glEnableVertexAttribArray(0);
+
+	glBindBuffer(GL_ARRAY_BUFFER, UV_PlanetB);
+	glVertexAttribPointer(
+		1, // attribute
+		2, // size
+		GL_FLOAT, // type
+		GL_FALSE, // normalized?
+		0, // stride
+		(void*)0 // array buffer offset
+		);
+	glEnableVertexAttribArray(1);
+
+
+	glBindBuffer(GL_ARRAY_BUFFER, Normal_PlanetB);
+	glVertexAttribPointer(
+		2, // attribute
+		3, // size
+		GL_FLOAT, // type
+		GL_FALSE, // normalized?
+		0, // stride
+		(void*)0 // array buffer offset
+		);
+	glEnableVertexAttribArray(2);
+
+
+	glDrawArrays(GL_TRIANGLES, 0, drawSize_PlanetB);
+
+	glBindVertexArray(0); // Unbind VAO*
+};
+
+void bindPlanetCObj()
+{
+	// Read our .obj file
+	std::vector<vec3> vertices;
+	std::vector<vec2> uvs;
+	std::vector<vec3> normals;
+	bool res = loadOBJ("obj/planet.obj", vertices, uvs, normals);
+	glGenVertexArrays(1, &VAO_PlanetC);
+	glBindVertexArray(VAO_PlanetC);
+
+	glGenBuffers(1, &VBO_PlanetC);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO_PlanetC);
+	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(glm::vec3), &vertices[0], GL_STATIC_DRAW);
+
+	glGenBuffers(1, &UV_PlanetC);
+	glBindBuffer(GL_ARRAY_BUFFER, UV_PlanetC);
+	glBufferData(GL_ARRAY_BUFFER, uvs.size() * sizeof(glm::vec2), &uvs[0], GL_STATIC_DRAW);
+
+	glGenBuffers(1, &Normal_PlanetC);
+	glBindBuffer(GL_ARRAY_BUFFER, Normal_PlanetC);
+	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(glm::vec3), &normals[0], GL_STATIC_DRAW);
+
+	drawSize_PlanetC = vertices.size();
+	// 1rst attribute buffer : vertices
+
+	glBindBuffer(GL_ARRAY_BUFFER, VBO_PlanetC);
+	glVertexAttribPointer(
+		0, // attribute
+		3, // size
+		GL_FLOAT, // type
+		GL_FALSE, // normalized?
+		0, // stride
+		(void*)0 // array buffer offset
+		);
+	glEnableVertexAttribArray(0);
+
+	glBindBuffer(GL_ARRAY_BUFFER, UV_PlanetC);
+	glVertexAttribPointer(
+		1, // attribute
+		2, // size
+		GL_FLOAT, // type
+		GL_FALSE, // normalized?
+		0, // stride
+		(void*)0 // array buffer offset
+		);
+	glEnableVertexAttribArray(1);
+
+
+	glBindBuffer(GL_ARRAY_BUFFER, Normal_PlanetC);
+	glVertexAttribPointer(
+		2, // attribute
+		3, // size
+		GL_FLOAT, // type
+		GL_FALSE, // normalized?
+		0, // stride
+		(void*)0 // array buffer offset
+		);
+	glEnableVertexAttribArray(2);
+
+
+	glDrawArrays(GL_TRIANGLES, 0, drawSize_PlanetC);
+
+	glBindVertexArray(0); // Unbind VAO*
+};
+
+
 void loadTexture()
 {
+	texture_cube = loadBMP_custom("awesome_face.bmp");
 	texture_Jeep = loadBMP_custom("jeep_texture.bmp");
 	texture_Jeep2 = loadBMP_custom("smileyface.bmp");
-	texture_Plane = loadBMP_custom("tiles.bmp");
+	texture_PlanetA = loadBMP_custom("tiles.bmp");
+	texture_PlanetB = loadBMP_custom("texture/earth.bmp");
+	texture_PlanetC = loadBMP_custom("smileyface.bmp");
 	carskin1 = loadBMP_custom("carskin1.bmp");
 	carskin2 = loadBMP_custom("carskin2.bmp");
 }
@@ -557,8 +794,11 @@ void sendDataToOpenGL()
 	//Load objects and bind to VAO & VBO
 	//Load texture
 
-	bindJeepObj();
-	bindPlaneObj();
+	bindCubeObj();
+	//bindJeepObj();
+	bindPlanetAObj();
+	bindPlanetBObj();
+	bindPlanetCObj();
 
 	loadTexture();
 
@@ -572,7 +812,7 @@ void light()
 	glUniform3fv(eyePositionUniformLocation, 1, &eyePositionWorld[0]);	
 	//Light source
 	GLint LightPositionUniformLocation = glGetUniformLocation(programID, "lightPositionWorld");
-	vec3 lightPosition(0.0f + x_press_num * x_delta, 5.0f + y_press_num * y_delta, 0.0f + z_press_num * z_delta);
+	vec3 lightPosition(0.0f + x_press_num * x_delta, 5.0f + y_press_num * y_delta, 1.0f + z_press_num * z_delta);
 	glUniform3fv(LightPositionUniformLocation, 1, &lightPosition[0]);
 	//ambient light is the background light in the environment
 	//with a light source(diffuse light), ambient light refills areas that light source does not reach
@@ -582,9 +822,45 @@ void light()
 	GLint diffuseBrightnessUniformLocation = glGetUniformLocation(programID, "diffuseBrightness");
 	glm::vec3 diffuseBrightness(diffuseBrightnessUnit, diffuseBrightnessUnit, diffuseBrightnessUnit);
 	glUniform3fv(diffuseBrightnessUniformLocation, 1, &diffuseBrightness[0]);
-	GLint SpecularBrightnessUniformLocation = glGetUniformLocation(programID, "SpecularBrightness");
-	glm::vec3 SpecularBrightness(1.0f, 1.0f, 1.0f);
-	glUniform3fv(SpecularBrightnessUniformLocation, 1, &SpecularBrightness[0]);
+	//GLint SpecularBrightnessUniformLocation = glGetUniformLocation(programID, "SpecularBrightness");
+	//glm::vec3 SpecularBrightness(1.0f, 1.0f, 1.0f);
+	//glUniform3fv(SpecularBrightnessUniformLocation, 1, &SpecularBrightness[0]);
+}
+
+void rendercube()
+{
+	//glBindVertexArray(vaoID);
+	//glm::mat4 modelTransformMatrix = glm::mat4(1.0f);
+	mat4 ViewMatrix = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+	mat4 rotationMatrix = glm::scale(mat4(), vec3(1, 1, 1));
+	rotationMatrix = glm::translate(rotationMatrix, vec3(0, 5, 1));
+	mat4 projectionMatrix = glm::perspective(60.0f + focus,
+		(GLfloat)800 / (GLfloat)600, 0.1f, 10.0f);
+
+	mat4 fullTransformMatrix = projectionMatrix * ViewMatrix * rotationMatrix; // care that the order is crucial
+
+	GLint fullTransformMatrixUniformLocation =
+		glGetUniformLocation(programID, "projectionMatrix");
+	glUniformMatrix4fv(fullTransformMatrixUniformLocation, 1,
+		GL_FALSE, &projectionMatrix[0][0]);
+	glUniformMatrix4fv(glGetUniformLocation(programID, "ViewMatrix"), 1,
+		GL_FALSE, &ViewMatrix[0][0]);
+	glUniformMatrix4fv(glGetUniformLocation(programID, "rotationMatrix"), 1,
+		GL_FALSE, &rotationMatrix[0][0]);
+
+	//Create sampler will be used in Shader
+	GLuint TextureID = glGetUniformLocation(programID, "myTextureSampler");
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, texture_cube);
+	glUniform1i(TextureID, 0);
+	TextureID = glGetUniformLocation(programID, "myTextureSampler2"); //needa use the same texture to myTextureSampler2
+	glActiveTexture(GL_TEXTURE1);									  //or else the texture we used earlier in jeep will overwrite the plane here
+	glBindTexture(GL_TEXTURE_2D, texture_cube);
+	glUniform1i(TextureID, 1);
+
+	//glDrawArrays(GL_TRIANGLES, 0, 6); //third argument: no of vertex
+	glBindVertexArray(vao_cube);
+	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_SHORT, 0);
 }
 
 void renderJeep()
@@ -645,10 +921,12 @@ void renderJeep()
 }
 
 
-void renderPlane()
+void renderPlanetA()
 {
 	mat4 ViewMatrix = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
-	mat4 rotationMatrix = glm::rotate(mat4(), 0 * 0.3922222f, vec3(1, 0, 0));;
+	mat4 rotationMatrix = glm::scale(mat4(), vec3(1, 1, 1));
+	rotationMatrix = glm::translate(rotationMatrix, vec3(8, 14, 0));
+	rotationMatrix = glm::rotate(rotationMatrix, 0 * 0.3922222f, vec3(1, 0, 0));;
 	rotationMatrix = glm::rotate(rotationMatrix, 0 * 0.3922222f, vec3(0, 1, 0));;
 	rotationMatrix = glm::rotate(rotationMatrix, 0 * -0.3922222f, vec3(0, 0, 1));;
 	mat4 projectionMatrix = glm::perspective(45.0f + focus,
@@ -669,16 +947,92 @@ void renderPlane()
 	//Create sampler will be used in Shader
 	GLuint TextureID = glGetUniformLocation(programID, "myTextureSampler");
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, texture_Plane);
+	glBindTexture(GL_TEXTURE_2D, texture_PlanetA);
 	glUniform1i(TextureID, 0);
 	TextureID = glGetUniformLocation(programID, "myTextureSampler2"); //needa use the same texture to myTextureSampler2
 	glActiveTexture(GL_TEXTURE1);									  //or else the texture we used earlier in jeep will overwrite the plane here
-	glBindTexture(GL_TEXTURE_2D, texture_Plane);
+	glBindTexture(GL_TEXTURE_2D, texture_PlanetA);
 	glUniform1i(TextureID, 1);
 
-	glBindVertexArray(VAO_Plane);
-	glDrawArrays(GL_TRIANGLES, 0, drawSize_Plane);
+	glBindVertexArray(VAO_PlanetA);
+	glDrawArrays(GL_TRIANGLES, 0, drawSize_PlanetA);
 }
+
+void renderPlanetB()
+{
+	mat4 ViewMatrix = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+	mat4 rotationMatrix = glm::translate(mat4(), vec3(-7, 10, 0));
+	rotationMatrix = glm::scale(rotationMatrix, vec3(1.2, 1.2, 1.2));
+	//rotationMatrix = glm::translate(rotationMatrix, vec3(-10, 20, 0));
+	rotationMatrix = glm::rotate(rotationMatrix, 0 * 0.3922222f, vec3(1, 0, 0));;
+	rotationMatrix = glm::rotate(rotationMatrix, 0 * 0.3922222f, vec3(0, 1, 0));;
+	rotationMatrix = glm::rotate(rotationMatrix, 0 * -0.3922222f, vec3(0, 0, 1));;
+	mat4 projectionMatrix = glm::perspective(45.0f + focus,
+		(GLfloat)800 / (GLfloat)600, 0.1f, 100.0f);
+
+	mat4 fullTransformMatrix = projectionMatrix * ViewMatrix * rotationMatrix; // care that the order is crucial
+	mat4 modelTransormMatrix = ViewMatrix * rotationMatrix;
+
+	GLint fullTransformMatrixUniformLocation =
+		glGetUniformLocation(programID, "projectionMatrix");
+	glUniformMatrix4fv(fullTransformMatrixUniformLocation, 1,
+		GL_FALSE, &projectionMatrix[0][0]);
+	glUniformMatrix4fv(glGetUniformLocation(programID, "ViewMatrix"), 1,
+		GL_FALSE, &ViewMatrix[0][0]);
+	glUniformMatrix4fv(glGetUniformLocation(programID, "rotationMatrix"), 1,
+		GL_FALSE, &rotationMatrix[0][0]);
+
+	//Create sampler will be used in Shader
+	GLuint TextureID = glGetUniformLocation(programID, "myTextureSampler");
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, texture_PlanetB);
+	glUniform1i(TextureID, 0);
+	TextureID = glGetUniformLocation(programID, "myTextureSampler2"); //needa use the same texture to myTextureSampler2
+	glActiveTexture(GL_TEXTURE1);									  //or else the texture we used earlier in jeep will overwrite the plane here
+	glBindTexture(GL_TEXTURE_2D, texture_PlanetB);
+	glUniform1i(TextureID, 1);
+
+	glBindVertexArray(VAO_PlanetB);
+	glDrawArrays(GL_TRIANGLES, 0, drawSize_PlanetB);
+}
+
+void renderPlanetC()
+{
+	mat4 ViewMatrix = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+	mat4 rotationMatrix = glm::scale(mat4(), vec3(0.3, 0.3, 0.3));
+	rotationMatrix = glm::translate(rotationMatrix, vec3(-8, 20, 0));
+	rotationMatrix = glm::rotate(rotationMatrix, 0 * 0.3922222f, vec3(1, 0, 0));;
+	rotationMatrix = glm::rotate(rotationMatrix, 0 * 0.3922222f, vec3(0, 1, 0));;
+	rotationMatrix = glm::rotate(rotationMatrix, 0 * -0.3922222f, vec3(0, 0, 1));;
+	mat4 projectionMatrix = glm::perspective(45.0f + focus,
+		(GLfloat)800 / (GLfloat)600, 0.1f, 100.0f);
+
+	mat4 fullTransformMatrix = projectionMatrix * ViewMatrix * rotationMatrix; // care that the order is crucial
+	mat4 modelTransormMatrix = ViewMatrix * rotationMatrix;
+
+	GLint fullTransformMatrixUniformLocation =
+		glGetUniformLocation(programID, "projectionMatrix");
+	glUniformMatrix4fv(fullTransformMatrixUniformLocation, 1,
+		GL_FALSE, &projectionMatrix[0][0]);
+	glUniformMatrix4fv(glGetUniformLocation(programID, "ViewMatrix"), 1,
+		GL_FALSE, &ViewMatrix[0][0]);
+	glUniformMatrix4fv(glGetUniformLocation(programID, "rotationMatrix"), 1,
+		GL_FALSE, &rotationMatrix[0][0]);
+
+	//Create sampler will be used in Shader
+	GLuint TextureID = glGetUniformLocation(programID, "myTextureSampler");
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, texture_PlanetC);
+	glUniform1i(TextureID, 0);
+	TextureID = glGetUniformLocation(programID, "myTextureSampler2"); //needa use the same texture to myTextureSampler2
+	glActiveTexture(GL_TEXTURE1);									  //or else the texture we used earlier in jeep will overwrite the plane here
+	glBindTexture(GL_TEXTURE_2D, texture_PlanetC);
+	glUniform1i(TextureID, 1);
+
+	glBindVertexArray(VAO_PlanetC);
+	glDrawArrays(GL_TRIANGLES, 0, drawSize_PlanetC);
+}
+
 
 
 void paintGL(void)
@@ -692,10 +1046,16 @@ void paintGL(void)
 
 	light();
 
-	glBindVertexArray(VAO_Jeep);
-	renderJeep();
-	glBindVertexArray(VAO_Plane);
-	renderPlane();
+	glBindVertexArray(vao_cube);
+	rendercube();
+	//glBindVertexArray(VAO_Jeep);
+	//renderJeep();
+	glBindVertexArray(VAO_PlanetA);
+	renderPlanetA();
+	glBindVertexArray(VAO_PlanetB);
+	renderPlanetB();
+	glBindVertexArray(VAO_PlanetC);
+	renderPlanetC();
 
 	glFlush();
 	glutPostRedisplay();

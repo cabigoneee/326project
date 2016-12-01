@@ -14,7 +14,6 @@ uniform sampler2D myTextureSampler;
 uniform sampler2D myTextureSampler2;
 
 uniform vec3 diffuseBrightness;
-uniform float SpecularBrightness;
 
 void main()
 {
@@ -31,13 +30,9 @@ void main()
 	float brightness = dot(lightVectorWorld, normalize(normalWorld));
 	vec3 diffuseLight = vec3(brightness, brightness, brightness);
 	// Specular
-	vec3 reflectedLightVectoreWorld = reflect(-lightVectorWorld, normalWorld);
-	vec3 eyeVectorWorld = normalize(eyePositionWorld - vertexPositionWorld);
-	float s = clamp(dot(reflectedLightVectoreWorld, eyeVectorWorld), 0, 1);
-	s = pow(s ,50);
-	vec3 speculatLight = vec3(s, 0, 0);
+
 	
-	vec3 result = (ambientLight + clamp(diffuseLight, 0, 1) * diffuseBrightness + speculatLight) * objectColor;
+	vec3 result = (ambientLight + clamp(diffuseLight, 0, 1) * diffuseBrightness) * objectColor;
 	daColor = vec4(result, 1.0f);
 	
 }	
